@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nuevo Presupuesto</title>
+    <link rel="stylesheet" href="/css/presupuesto.css">
+</head>
+<body>
+    <header>
+        <h1>Registrar Nuevo Presupuesto</h1>
+        <div class="acciones-header">
+            <a href="/presupuesto" class="btn volver">← Volver a la lista</a>
+        </div>
+    </header>
+
+    <main>
+        <form action="/presupuesto/guardar" method="post" th:object="${presupuesto}" class="formulario">
+            <div class="form-section">
+                <label for="cliente">Cliente:</label>
+                <select id="cliente" name="cliente.id" required>
+                    <option value="">Selecciona un cliente</option>
+                    <option th:each="cliente : ${clientes}" 
+                            th:value="${cliente.id}" 
+                            th:text="${cliente.nombre}"></option>
+                </select>
+            </div>
+
+            <div class="form-section">
+                <label for="usuario">Usuario:</label>
+                <select id="usuario" name="usuario.id" required>
+                    <option value="">Selecciona un usuario</option>
+                    <option th:each="usuario : ${usuarios}" 
+                            th:value="${usuario.id}" 
+                            th:text="${usuario.nombre}"></option>
+                </select>
+            </div>
+
+            <div class="form-section">
+                <label for="fechaValidez">Fecha de Validez:</label>
+                <input type="date" id="fechaValidez" name="fechaValidez" required>
+            </div>
+
+            <div class="form-section">
+                <label for="subtotal">Subtotal:</label>
+                <input type="number" step="0.01" id="subtotal" name="subtotal" required>
+            </div>
+
+            <div class="form-section">
+                <label for="descuento">Descuento:</label>
+                <input type="number" step="0.01" id="descuento" name="descuento" placeholder="0.00">
+            </div>
+
+            <div class="form-section">
+                <label for="total">Total:</label>
+                <input type="number" step="0.01" id="total" name="total" required>
+            </div>
+
+            <div class="form-section">
+                <label for="estado">Estado:</label>
+                <select id="estado" name="estado" required>
+                    <option value="">Selecciona un estado</option>
+                    <option value="pendiente">Pendiente</option>
+                    <option value="aceptado">Aceptado</option>
+                    <option value="rechazado">Rechazado</option>
+                    <option value="vencido">Vencido</option>
+                </select>
+            </div>
+
+            <div class="acciones">
+                <button type="submit" class="btn guardar">Guardar Presupuesto</button>
+            </div>
+        </form>
+    </main>
+</body>
+</html>

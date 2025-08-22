@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Clientes</title>
+    <link rel="stylesheet" href="/css/cliente.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h2>Encanto<span>Mulher</span></h2>
+            <nav>
+                <ul>
+                    <li><a th:href="@{/home}">Dashboard</a></li>
+                    <li><a th:href="@{/ventas}">Ventas</a></li>
+                    <li><a th:href="@{/caja}">Caja Diario</a></li>
+                    <li><a th:href="@{/stock}">Stock</a></li>
+                    <li><a th:href="@{/presupuesto}">Presupuesto</a></li>
+                    <li><a th:href="@{/cliente}">Clientes</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Clientes</h1>
+                <a th:href="@{/cliente/nuevo}" class="btn-new">Nuevo Cliente</a>
+            </header>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Documento</th>
+                            <th>Dirección</th>
+                            <th>Teléfono</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="cliente : ${clientes}">
+                            <td th:text="${cliente.idCliente}"></td>
+                            <td th:text="${cliente.nombre}"></td>
+                            <td th:text="${cliente.documento}"></td>
+                            <td th:text="${cliente.direccion}"></td>
+                            <td th:text="${cliente.telefono}"></td>
+                            <td>
+                                <a th:href="@{'/cliente/editar/' + ${cliente.idCliente}}" class="btn-edit"><i class="fas fa-edit"></i></a>
+                                <a th:href="@{'/cliente/eliminar/' + ${cliente.idCliente}}" class="btn-delete"><i class="fas fa-trash-alt"></i></a>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

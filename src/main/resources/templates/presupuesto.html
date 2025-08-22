@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Presupuestos</title>
+    <link rel="stylesheet" href="/css/presupuesto.css">
+</head>
+<body>
+    <header>
+        <h1>Presupuestos</h1>
+        <div class="acciones-header">
+            <a th:href="@{/presupuesto}" class="">Volver</a>
+            <a th:href="@{/presupuesto/nuevo}" class="">Nuevo Presupuesto</a>
+        </div>
+    </header>
+
+    <main>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Usuario</th>
+                    <th>Fecha Emisión</th>
+                    <th>Validez</th>
+                    <th>Subtotal</th>
+                    <th>Descuento</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="presupuesto : ${presupuestos}">
+                    <td th:text="${presupuesto.idPresupuesto}">ID</td>
+                    <td th:text="${presupuesto.cliente.nombre}">Cliente</td>
+                    <td th:text="${presupuesto.usuario.nombre}">Usuario</td>
+                    <td th:text="${#temporals.format(presupuesto.fechaEmision, 'yyyy-MM-dd HH:mm')}">Fecha Emisión</td>
+                    <td th:text="${#temporals.format(presupuesto.fechaValidez, 'yyyy-MM-dd')}">Validez</td>
+                    <td th:text="${presupuesto.subtotal}">Subtotal</td>
+                    <td th:text="${presupuesto.descuento}">Descuento</td>
+                    <td th:text="${presupuesto.total}">Total</td>
+                    <td th:text="${presupuesto.estado}">Estado</td>
+                    <td>
+                        <a th:href="@{'/presupuesto/ver/' + ${presupuesto.idPresupuesto}}" class="btn-sm">Ver</a>
+                        <a th:href="@{'/presupuesto/editar/' + ${presupuesto.idPresupuesto}}" class="btn-sm">Editar</a>
+                        <a th:href="@{'/presupuesto/eliminar/' + ${presupuesto.idPresupuesto}}" class="btn-sm eliminar">Eliminar</a>
+                    </td>
+                </tr>
+                <!-- Si no hay presupuestos muestra un mensaje -->
+                <tr th:if="${#lists.isEmpty(presupuestos)}">
+                    <td colspan="10">No hay presupuestos registrados.</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>

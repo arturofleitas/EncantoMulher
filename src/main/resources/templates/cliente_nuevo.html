@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Registrar Venta</title>
+  <!-- MISMA PALETA QUE venta_editar -->
+  <link rel="stylesheet" href="/css/venta_editar.css">
+  <style>
+    /* Ajustes mínimos para esta pantalla reutilizando tu paleta */
+    .page { max-width: 1100px; margin: 24px auto; }
+    .card { background: #fff; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,.08); padding: 24px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .actions { display:flex; gap:12px; margin-top: 16px; }
+    .btn-primary{ background: var(--primary-600); color:#fff; border:0; border-radius:10px; padding:10px 14px; cursor:pointer;}
+    .btn-secondary{ background:#f3e5f5; color:var(--primary-700); border:0; border-radius:10px; padding:10px 14px; cursor:pointer; }
+    .btn-danger{ background:#ffe3e3; color:#b00020; border:0; border-radius:8px; padding:6px 10px; cursor:pointer;}
+    table { width:100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { padding: 10px 12px; border-bottom:1px solid #eee; }
+    thead th { background: var(--primary-50); color: var(--primary-800); font-weight:600; }
+    tfoot td { font-weight: 700; }
+    .right { text-align: right; }
+    .sr-only{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;}
+    .error-msg{ color:#b00020; font-size:.9rem; margin-top:4px; }
+  </style>
+</head>
+<body>
+<div class="page">
+  <h1 style="color:var(--primary-800); margin-bottom:16px;">Registrar Venta</h1>
+
+  <form class="card" th:action="@{/venta/registrar}" method="post" novalidate>
+    <!-- Datos generales -->
+    <section class="grid-2" aria-labelledby="datos-venta">
+      <h2 id="datos-venta" class="sr-only">Datos de venta</h2>
+
+      <div class="form-group">
+        <label for="clienteId">Cliente <span aria-hidden="true" style="color:var(--primary-700)">*</span></label>
+        <select id="clienteId" name="clienteId" required>
+          <option value="">-- Selecciona --</option>
+          <option th:each="c : ${clientes}" th:value="${c.idCliente}" th:text="${c.nombre}"></option>
+        </select>
+        <div class="error-msg" data-error-for="clienteId" hidden>Selecciona un cliente.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="tipoPago">Tipo de Pago <span aria-hidden="true" style="color:var(--primary-700)">*</span></label>
+        <select id="tipoPago" name="tipoPago" required>
+          <option value="">-- Selecciona --</option>
+          <option value="efectivo">Efectivo</option>
+          <option value="tarjeta">Tarjeta</option>
+          <option value="transferencia">Transferencia</option>
+          <option value="mixto">Mixto</option>
+        </select>
+        <div class="error-msg" data-error-for="tipoPago" hidden>Selecciona el tipo de pago.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="estado">Estado <span aria-hidden="true" style="color:var(--primary-700)">*</span></label>
+        <select id="estado" name="estado" required>
+          <option value="pendiente">Pendiente</option>
+          <option value="pagado">Pagado</option>
+          <option value="anulado">Anulado</option>
+        </select>
+      </div>
+
+      <!-- Según tu backend: envía el usuario logueado -->
+      <input type="hidden" name="usuarioId" th:value="${#authentication.principal.idUsuario}" />
+    </section>
+
+    <!-- Ítems -->
+    <section style="margin-top:24px" aria-labelledby="detalle">
+      <h2 id="detalle" style="color:var(--primary-700);">Detalle de Productos</h2>
+
+      <!-- plantilla de opciones de productos para clonar -->
+      <select id="tpl-productos" class="sr-only">
+        <option th:each="p : ${productos}" th:value="${p.idProducto}"
+                th:data-precio="${p.precioVenta}"
+                th:text="${p.nombre}"></option>
+      </select>
+
+      <table aria-describedby="detalle">
+        <thead>
+          <tr>
+            <th style="width: 42%">Producto</th>
+            <th class="right" style="width: 12%">Cant.</th>
+            <th class="right" style="width: 18%">Precio</th>
+            <th class="right" style="width: 14%">Desc.</th>
+            <th class="right" style="width: 18%">Subtotal</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="items">
+          <!-- fila inicial -->
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="6">
+              <button type="button" class="btn-secondary" id="btnAdd">+ Agregar producto</button>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </section>
+
+    <!-- Resumen -->
+    <section class="grid-2" style="margin-top:24px" aria-labelledby="resumen">
+      <h2 id="resumen" class="sr-only">Resumen de Totales</h2>
+
+      <div class="form-group">
+        <label for="subtotal">Subtotal</label>
+        <input id="subtotal" name="subtotal" type="text" readonly aria-live="polite" />
+      </div>
+
+      <div class="form-group">
+        <label for="total">Total</label>
+        <input id="total" name="total" type="text" readonly aria-live="polite" />
+      </div>
+    </section>
+
+    <div class="actions">
+      <a href="/venta" class="btn-secondary">Cancelar</a>
+      <button type="submit" class="btn-primary" id="btnSave">Guardar Venta</button>
+    </div>
+  </form>
+</div>
+
+<script>
+(function () {
+  const items = document.getElementById('items');
+  const tpl = document.getElementById('tpl-productos');
+  const btnAdd = document.getElementById('btnAdd');
+  const subtotalEl = document.getElementById('subtotal');
+  const totalEl = document.getElementById('total');
+
+  const money = n => (n || 0).toLocaleString('es-PY', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const parseMoney = v => Number(String(v).replace(/[^\d,.-]/g,'').replace('.','').replace(',','.')) || 0;
+
+  function nuevaFila() {
+    const tr = document.createElement('tr');
+
+    // Producto
+    const tdProd = document.createElement('td');
+    const sel = document.createElement('select');
+    sel.name = 'productoIds';
+    sel.required = true;
+    sel.innerHTML = '<option value="">-- Selecciona --</option>' + tpl.innerHTML;
+    tdProd.appendChild(sel);
+
+    // Cantidad
+    const tdCant = document.createElement('td'); tdCant.className = 'right';
+    const qty = document.createElement('input');
+    qty.type = 'number'; qty.min = '1'; qty.step = '1'; qty.value = '1'; qty.name = 'cantidades';
+    qty.required = true; qty.style.textAlign = 'right';
+    tdCant.appendChild(qty);
+
+    // Precio
+    const tdPrecio = document.createElement('td'); tdPrecio.className = 'right';
+    const price = document.createElement('input');
+    price.type = 'text'; price.name = 'precioUnitarioVista'; price.readOnly = true; price.style.textAlign='right';
+    tdPrecio.appendChild(price);
+
+    // Descuento
+    const tdDesc = document.createElement('td'); tdDesc.className = 'right';
+    const disc = document.createElement('input');
+    disc.type = 'number'; disc.step='0.01'; disc.min='0'; disc.value='0'; disc.name='descuentos';
+    disc.style.textAlign='right';
+    tdDesc.appendChild(disc);
+
+    // Subtotal
+    const tdSub = document.createElement('td'); tdSub.className = 'right';
+    const sub = document.createElement('input');
+    sub.type='text'; sub.readOnly = true; sub.name='subtotalesVista'; sub.style.textAlign='right';
+    tdSub.appendChild(sub);
+
+    // Quitar
+    const tdAcc = document.createElement('td');
+    const btnDel = document.createElement('button');
+    btnDel.type='button'; btnDel.className='btn-danger'; btnDel.textContent='Quitar';
+    tdAcc.appendChild(btnDel);
+
+    tr.append(tdProd, tdCant, tdPrecio, tdDesc, tdSub, tdAcc);
+    items.appendChild(tr);
+
+    // Eventos
+    sel.addEventListener('change', () => {
+      const opt = sel.options[sel.selectedIndex];
+      const precio = Number(opt.getAttribute('data-precio')) || 0;
+      price.value = money(precio);
+      recalcularFila();
+    });
+    qty.addEventListener('input', recalcularFila);
+    disc.addEventListener('input', recalcularFila);
+    btnDel.addEventListener('click', () => { tr.remove(); recalcularTotales(); });
+
+    function recalcularFila() {
+      const opt = sel.options[sel.selectedIndex];
+      const precio = Number(opt?.getAttribute?.('data-precio')) || 0;
+      const cantidad = Number(qty.value) || 0;
+      const descuento = Number(disc.value) || 0;
+      const subtotal = Math.max(precio * cantidad - descuento, 0);
+      sub.value = money(subtotal);
+      recalcularTotales();
+    }
+
+    return tr;
+  }
+
+  function recalcularTotales() {
+    let subtotal = 0;
+    items.querySelectorAll('tr').forEach(tr => {
+      const sub = tr.querySelector('input[name="subtotalesVista"]');
+      subtotal += parseMoney(sub.value);
+    });
+    subtotalEl.value = money(subtotal);
+    totalEl.value = money(subtotal); // descuento global en esta pantalla = 0 (tu backend recalcula igual)
+  }
+
+  btnAdd.addEventListener('click', () => {
+    const row = nuevaFila();
+    // enfoque inicial en select
+    row.querySelector('select').focus();
+  });
+
+  // fila por defecto
+  btnAdd.click();
+
+  // Validación mínima de campos obligatorios
+  document.getElementById('btnSave').form.addEventListener('submit', (e) => {
+    const requiredOk = ['clienteId','tipoPago','estado'].every(id => {
+      const el = document.getElementById(id);
+      const err = document.querySelector(`[data-error-for="${id}"]`);
+      const ok = !!el.value;
+      if (err) err.hidden = ok;
+      return ok;
+    });
+    if (!requiredOk || items.children.length === 0) {
+      e.preventDefault();
+      alert('Revisa los datos: cliente, tipo de pago, estado e ítems de la venta.');
+    }
+  });
+})();
+</script>
+</body>
+</html

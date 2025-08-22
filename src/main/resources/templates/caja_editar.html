@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Editar Venta</title>
+  <link rel="stylesheet" href="/css/venta.css"/>
+</head>
+<body>
+<h1>Editar Venta</h1>
+
+<div th:if="${venta != null}" th:object="${venta}">
+  <p><strong>ID:</strong> <span th:text="*{idVenta}">-</span></p>
+  <p><strong>Cliente:</strong> <span th:text="*{cliente.nombre}">-</span></p>
+  <p><strong>Subtotal:</strong> <span th:text="*{subtotal}">0</span></p>
+  <p><strong>Descuento actual:</strong> <span th:text="*{descuento}">0</span></p>
+  <p><strong>Total actual:</strong> <span th:text="*{total}">0</span></p>
+
+  <form th:action="@{|/venta/${venta.idVenta}/editar|}" method="post" style="margin-top:12px;">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+    <!-- Estado -->
+    <label>Estado:</label>
+    <select name="estado" required>
+      <option th:selected="${venta.estado.name() == 'pendiente'}" value="pendiente">pendiente</option>
+      <option th:selected="${venta.estado.name() == 'pagada'}" value="pagada">pagada</option>
+      <option th:selected="${venta.estado.name() == 'anulada'}" value="anulada">anulada</option>
+    </select>
+
+    <!-- Tipo de pago -->
+    <label style="margin-left:10px;">Tipo de pago:</label>
+    <select name="tipoPago" required>
+      <option th:selected="${venta.tipoPago.name() == 'efectivo'}" value="efectivo">efectivo</option>
+      <option th:selected="${venta.tipoPago.name() == 'tarjeta'}" value="tarjeta">tarjeta</option>
+      <option th:selected="${venta.tipoPago.name() == 'transferencia'}" value="transferencia">transferencia</option>
+    </select>
+
+    <!-- Descuento global -->
+    <div style="margin-top:10px;">
+      <label>Descuento global (Gs):</label>
+      <input type="number" name="descuentoGlobal" min="0" step="1" th:value="${venta.descuento != null ? venta.descuento : 0}"/>
+    </div>
+
+    <div style="margin-top:12px;">
+      <button type="submit">Guardar cambios</button>
+      <a href="/venta" style="margin-left:10px;">Cancelar</a>
+    </div>
+  </form>
+</div>
+
+<div th:if="${venta == null}">
+  <p>Venta no encontrada.</p>
+  <a href="/venta">Volver</a>
+</div>
+
+</body>
+</html>

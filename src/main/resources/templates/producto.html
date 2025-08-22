@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Productos</title>
+    <link rel="stylesheet" href="/css/producto.css">
+</head>
+<body>
+    <div class="producto-formulario">
+        <h1>Lista de Productos</h1>
+
+        <div style="text-align: right; margin-bottom: 20px;">
+            <a href="/producto/nuevo" class="boton-nuevo">+ Nuevo Producto</a>
+        </div>
+
+        <table class="producto-tabla">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Categoría</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="producto : ${productos}">
+                    <td th:text="${producto.idProducto}">1</td>
+                    <td th:text="${producto.codigoBarras}">ABC123</td>
+                    <td th:text="${producto.nombre}">Producto X</td>
+                    <td th:text="${producto.precioVenta}">120.00</td>
+                    <td th:text="${producto.stock}">20</td>
+                    <td th:text="${producto.categoria}">mujer</td>
+                    <td th:text="${producto.estado ? 'Activo' : 'Inactivo'}">Activo</td>
+                    <td class="producto-acciones">
+                        <a th:href="@{/producto/editar/{id}(id=${producto.idProducto})}">Editar</a>
+                        <a th:href="@{/producto/eliminar/{id}(id=${producto.idProducto})}" 
+                           onclick="return confirm('¿Estás seguro de eliminar este producto?');">
+                           Eliminar
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

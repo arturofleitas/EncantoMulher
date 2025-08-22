@@ -1,0 +1,105 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+}
+
+/* Formulario */
+.producto-formulario {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 25px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.producto-formulario h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 25px;
+}
+
+.producto-formulario label {
+    display: block;
+    margin-top: 12px;
+    font-weight: bold;
+}
+
+.producto-formulario input[type="text"],
+.producto-formulario input[type="number"],
+.producto-formulario textarea,
+.producto-formulario select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.producto-formulario input[type="checkbox"] {
+    margin-top: 10px;
+}
+
+.botones {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.botones button {
+    background-color: #3498db;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.botones button:hover {
+    background-color: #2980b9;
+}
+
+.botones .cancelar {
+    text-decoration: none;
+    background-color: #ccc;
+    color: #333;
+    padding: 10px 20px;
+    border-radius: 6px;
+}
+
+.botones .cancelar:hover {
+    background-color: #aaa;
+}
+
+/* Tabla de productos */
+.producto-tabla {
+    width: 90%;
+    margin: 30px auto;
+    border-collapse: collapse;
+    background-color: #fff;
+}
+
+.producto-tabla th,
+.producto-tabla td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.producto-tabla th {
+    background-color: #3498db;
+    color: white;
+}
+
+.producto-acciones a {
+    margin-right: 10px;
+    color: #3498db;
+    text-decoration: none;
+}
+
+.producto-acciones a:hover {
+    text-decoration: underline;
+}

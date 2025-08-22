@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ventas</title>
+  <link rel="stylesheet" th:href="@{/css/venta.css}">
+</head>
+<body>
+  <div class="container"><!-- <== coincide con .container del CSS -->
+    <h1>Ventas</h1>
+
+    <div class="actions">
+      <a class="btn-secondary" th:href="@{/home}">Volver</a>
+      <a class="btn-primary"  th:href="@{/venta/nueva}">Registrar nueva</a>
+    </div>
+
+    <table class="table"><!-- <== coincide con .table del CSS -->
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Cliente</th>
+          <th>Usuario</th>
+          <th>Fecha</th>
+          <th class="right">Total</th>
+          <th>Tipo Pago</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr th:each="v : ${ventas}">
+          <td th:text="${v.idVenta}">1</td>
+          <td th:text="${v.cliente != null ? v.cliente.nombre : '-'}">Cliente</td>
+          <td th:text="${v.usuario != null ? v.usuario.nombre : '-'}">Usuario</td>
+          <td th:text="${#temporals.format(v.fechaVenta,'dd/MM/yyyy HH:mm')}">--</td>
+          <td class="right" th:text="${#numbers.formatDecimal(v.total,0,'POINT',0,'COMMA')}">0</td>
+
+          <td th:text="${v.tipoPago}">efectivo</td>
+          <td th:text="${v.estado}">pendiente</td>
+          <td>
+            <a class="btn-primary" th:href="@{|/venta/editar/${v.idVenta}|}">Editar</a>
+          </td>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(ventas)}">
+          <td colspan="10" style="text-align:center;color:#777;">Sin registros</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Venta</title>
+    <!-- ✅ Thymeleaf enlazado al CSS -->
+    <link rel="stylesheet" th:href="@{/css/venta_form.css}">
+</head>
+<body>
+<form th:action="@{/venta/guardar}" method="post">
+    <input type="hidden" name="idVenta" th:value="${venta.idVenta}">
+
+    <!-- Cliente -->
+    <div>
+        <label>Cliente:</label>
+        <input type="text" id="buscadorCliente" placeholder="Buscar cliente por nombre o documento">
+        <select name="clienteId" id="clienteSelect" required>
+            <option th:each="c : ${clientes}"
+                    th:value="${c.idCliente}"
+                    th:text="${c.nombre}">
+            </option>
+        </select>
+    </div>
+
+    <!-- Buscador de productos -->
+    <div>
+        <label>Buscar Producto:</label>
+        <input type="text" id="buscadorProducto" placeholder="Buscar por código o nombre">
+        <button type="button" id="btnAgregarProducto" class="btn-agregar">Agregar</button>
+    </div>
+
+    <!-- Tabla de productos -->
+    <table class="tabla-productos">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Cant.</th>
+                <th>Precio Unitario</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody id="tablaProductos">
+            <tr th:each="det : ${venta.detalles}">
+                <td>
+                    <input type="hidden" name="productoIds" th:value="${det.producto.idProducto}">
+                    <span th:text="${det.producto.codigoBarras}"></span>
+                </td>
+                <td th:text="${det.producto.nombre}"></td>
+                <td th:text="${det.producto.descripcion}"></td>
+                <td>
+                    <input type="number" name="cantidades" th:value="${det.cantidad}" 
+                           min="1" class="cantidad cantidad-input">
+                </td>
+                <td th:text="${#numbers.formatDecimal(det.precioUnitario, 1, 'COMMA', 2, 'POINT')}"></td>
+                <td><button type="button" class="btnEliminar">❌</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Solo TOTAL -->
+    <div>
+        <label>Total Venta:</label>
+        <span id="totalVenta" th:text="${#numbers.formatDecimal(venta.total, 1, 'COMMA', 2, 'POINT')}"></span>
+    </div>
+
+    <!-- Tipo de pago -->
+    <div>
+        <label>Forma de Pago:</label>
+        <select name="tipoPago" required>
+            <option value="efectivo">Efectivo</option>
+            <option value="tarjeta">Tarjeta</option>
+            <option value="transferencia">Transferencia</option>
+            <option value="mixto">Mixto</option>
+        </select>
+    </div>
+
+    <!-- Estado -->
+    <div>
+        <label>Estado:</label>
+        <select name="estado" required>
+            <option value="pendiente">Pendiente</option>
+            <option value="pagado">Pagado</option>
+            <option value="anulado">Anulado</option>
+        </select>
+    </div>
+
+    <div class="botones">
+        <button type="reset" class="btn-cancelar">Cancelar</button>
+        <button type="submit" class="btn-guardar">Guardar Venta</button>
+    </div>
+</form>
+
+<!-- ✅ Script integrado -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const buscadorProd = document.getElementById("buscadorProducto");
+    const buscadorCli = document.getElementById("buscadorCliente");
+    const tabla = document.getElementById("tablaProductos");
+    const totalVenta = document.getElementById("totalVenta");
+
+    // === Buscar Cliente ===
+    buscadorCli.addEventListener("keyup", () => {
+        fetch(`/venta/buscarCliente?q=${buscadorCli.value}`)
+            .then(res => res.json())
+            .then(clientes => {
+                const sel = document.getElementById("clienteSelect");
+                sel.innerHTML = "";
+                clientes.forEach(c => {
+                    let opt = document.createElement("option");
+                    opt.value = c.id;
+                    opt.textContent = c.nombre;
+                    sel.appendChild(opt);
+                });
+            });
+    });
+
+    // === Agregar Producto ===
+    document.getElementById("btnAgregarProducto").addEventListener("click", () => {
+        const query = buscadorProd.value;
+        if (!query) return;
+
+        fetch(`/venta/buscarProducto?q=${query}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.length === 0) {
+                    alert("No se encontró producto");
+                    return;
+                }
+                const p = data[0];
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td><input type="hidden" name="productoIds" value="${p.id}">${p.codigo}</td>
+                    <td>${p.nombre}</td>
+                    <td>${p.descripcion}</td>
+                    <td><input type="number" name="cantidades" value="1" min="1" class="cantidad cantidad-input"></td>
+                    <td>${p.precio}</td>
+                    <td><button type="button" class="btnEliminar">❌</button></td>
+                `;
+                tabla.appendChild(row);
+                calcularTotal();
+            });
+    });
+
+    // === Eliminar Producto ===
+    tabla.addEventListener("click", e => {
+        if (e.target.classList.contains("btnEliminar")) {
+            e.target.closest("tr").remove();
+            calcularTotal();
+        }
+    });
+
+    // === Recalcular Total ===
+    tabla.addEventListener("input", e => {
+        if (e.target.classList.contains("cantidad")) calcularTotal();
+    });
+
+    function calcularTotal() {
+        let total = 0;
+        tabla.querySelectorAll("tr").forEach(row => {
+            const qty = row.querySelector(".cantidad")?.value || 0;
+            const precio = row.cells[4]?.textContent || 0;
+            total += parseFloat(qty) * parseFloat(precio);
+        });
+        totalVenta.textContent = total.toLocaleString("es-PY");
+    }
+});
+</script>
+</body>
+</html>

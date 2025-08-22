@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Movimientos de Stock</title>
+    <link rel="stylesheet" href="/css/stock.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Movimientos de Stock</h1>
+        
+        <div class="acciones">
+            <a th:href="@{/home}" class="btn">Volver al Inicio</a>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Usuario</th>
+                    <th>Tipo</th>
+                    <th>Cantidad</th>
+                    <th>Motivo</th>
+                    <th>Fecha</th>
+                    <th>Observaciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="movimiento : ${movimientos}">
+                    <td th:text="${movimiento.producto.nombre}">Producto</td>
+                    <td th:text="${movimiento.usuario.nombre}">Usuario</td>
+                    <td th:text="${movimiento.tipo}">Tipo</td>
+                    <td th:text="${movimiento.cantidad}">Cantidad</td>
+                    <td th:text="${movimiento.motivo}">Motivo</td>
+                    <td th:text="${#dates.format(movimiento.fechaMovimiento, 'dd/MM/yyyy HH:mm')}">Fecha</td>
+                    <td th:text="${movimiento.observaciones}">Observaciones</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

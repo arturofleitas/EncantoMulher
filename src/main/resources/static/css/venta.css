@@ -1,0 +1,118 @@
+/* ===== Paleta (igual a venta_editar) ===== */
+:root{
+  --accent-900:#880e4f;
+  --accent-700:#ad1457;
+  --accent:#d81b60;          /* principal */
+  --accent-200:#f8bbd0;      /* rosa claro */
+  --accent-50:#fde7f1;       /* fondo cabecera tabla */
+  --text:#333;
+  --bg:#fafafa;
+  --card:#fff;
+  --border:#e6e6e6;
+
+  --btn-primary:#4CAF50;     /* dejamos los botones en verde como en tu lista */
+  --btn-primary-hover:#3d8b40;
+  --btn-secondary:#6c757d;
+  --btn-secondary-hover:#5a6268;
+}
+
+/* ===== Reset ===== */
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* ===== Contenedor ===== */
+.container{
+  width:95%;
+  max-width:1200px;
+  margin:18px auto;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:18px;
+  box-shadow:0 2px 10px rgba(0,0,0,.05);
+}
+
+/* ===== Título ===== */
+h1{
+  font-size:32px;
+  font-weight:800;
+  color:var(--accent);
+  margin-bottom:14px;
+}
+
+/* ===== Acciones / Botones ===== */
+.actions{margin-bottom:12px}
+
+.btn-primary,.btn-secondary{
+  display:inline-block;
+  padding:8px 14px;
+  border-radius:8px;
+  border:none;
+  text-decoration:none;
+  color:#fff;
+  font-size:14px;
+  cursor:pointer;
+  transition:transform .05s ease, background-color .2s ease;
+  box-shadow:0 2px 6px rgba(0,0,0,.08);
+}
+.btn-primary{background:var(--btn-primary)}
+.btn-primary:hover{background:var(--btn-primary-hover)}
+.btn-secondary{background:var(--btn-secondary)}
+.btn-secondary:hover{background:var(--btn-secondary-hover)}
+.btn-primary:active,.btn-secondary:active{transform:translateY(1px)}
+
+/* ===== Tabla ===== */
+.table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  overflow:hidden; /* para redondeo en cabecera */
+}
+
+.table thead th{
+  background:var(--accent-50);
+  color:var(--accent-700);
+  font-weight:700;
+  padding:12px 10px;
+  border-bottom:1px solid var(--border);
+  text-align:left;
+  font-size:14px;
+}
+
+.table tbody td{
+  padding:11px 10px;
+  border-bottom:1px solid var(--border);
+  font-size:14px;
+}
+
+.table tbody tr:nth-child(even){background:#fff}
+.table tbody tr:nth-child(odd){background:var(--bg)}
+.table tbody tr:hover{
+  background:var(--accent-50);
+  transition:background .15s ease;
+}
+
+/* Botón “Editar” dentro de la tabla */
+.table .btn-primary{
+  padding:6px 10px;
+  font-size:13px;
+  border-radius:6px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 920px){
+  .container{padding:14px}
+  h1{font-size:26px}
+  .table thead th,.table tbody td{padding:10px 8px;font-size:13px}
+}
+@media (max-width: 640px){
+  .actions a{margin-bottom:8px;display:inline-block}
+  .table thead th,.table tbody td{padding:9px 6px;font-size:12.5px}
+}

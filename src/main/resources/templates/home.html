@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Inicio</title>
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="container">
+    <aside class="sidebar">
+        <h2>Encanto<span>Mulher</span></h2>
+        <nav>
+            <ul>
+                <li class="active"><a th:href="@{/home}">Dashboard</a></li>
+                <li><a th:href="@{/venta}">Ventas</a></li>
+                <li><a th:href="@{/caja}">Caja Diario</a></li>
+                <li><a th:href="@{/cliente}">Clientes</a></li>
+                <li><a th:href="@{/producto}">Productos</a></li>
+                <li><a th:href="@{/stock}">Stock</a></li>
+                <li><a th:href="@{/presupuesto}">Presupuesto</a></li>
+                
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <h1>Bienvenido al sistema Encanto Mulher</h1>
+        <p>Selecciona una opción del menú lateral para comenzar.</p>
+    </main>
+</div>
+</body>
+</html>
